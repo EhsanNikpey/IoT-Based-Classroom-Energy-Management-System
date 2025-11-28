@@ -474,7 +474,7 @@ python ac_controller.py
 
 ## 📸 Screenshots
 
-*Add screenshots of your Telegram bot, InfluxDB dashboard, and system monitoring here*
+* screenshots of Telegram bot, InfluxDB dashboard, and system monitoring will be added here*
 
 ---
 
@@ -542,3 +542,4 @@ For questions, suggestions, or support:
 Made with ❤️ for sustainable education
 
 </div>
+
