@@ -1,545 +1,538 @@
-# 🏫 IoT-Based Classroom Energy Management System
+# IoT-Based Classroom Energy Management System
 
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
-[![MQTT](https://img.shields.io/badge/MQTT-Mosquitto-orange.svg)](https://mosquitto.org/)
-[![InfluxDB](https://img.shields.io/badge/InfluxDB-2.7-blue.svg)](https://www.influxdata.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Flask](https://img.shields.io/badge/Flask-3.0-green)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![MQTT](https://img.shields.io/badge/MQTT-Mosquitto-orange)
+![SQLite](https://img.shields.io/badge/Database-SQLite-lightgrey)
+![YOLOv8](https://img.shields.io/badge/AI-YOLOv8-red)
+![Raspberry Pi](https://img.shields.io/badge/Platform-Raspberry%20Pi-darkgreen)
 
-> An intelligent IoT platform that automates classroom lighting and HVAC control to optimize energy consumption in educational institutions, reducing electricity waste through smart sensor integration and adaptive algorithms.
+## Overview
 
----
+The **IoT-Based Classroom Energy Management System** is an intelligent smart-building platform designed to optimize classroom energy consumption through IoT automation, AI-powered occupancy detection, predictive HVAC control, weather-aware ventilation, and automated scheduling.
 
-## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Architecture](#-architecture)
-- [Technology Stack](#-technology-stack)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [Control Algorithms](#-control-algorithms)
-- [API Documentation](#-api-documentation)
-- [MQTT Topics](#-mqtt-topics)
-- [Telegram Bot](#-telegram-bot)
-- [Hardware Setup](#-hardware-setup)
-- [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [Team](#-team)
-- [License](#-license)
+The system combines edge computing devices, real-time sensors, MQTT communication, machine learning, and centralized management to reduce energy waste while maintaining occupant comfort.
 
 ---
 
-## 🌟 Overview
+# Repository Organization
 
-The **IoT-Based Classroom Energy Management System** is a comprehensive solution designed to reduce energy waste in educational facilities by intelligently controlling lighting and air conditioning based on real-time occupancy and environmental conditions.
+The project is divided into two major components:
 
-### Problem Statement
+## Central Management Platform
 
-Educational institutions face significant energy waste from:
-- Lights left on in empty classrooms
-- Air conditioning running without occupancy
-- Inefficient manual control of classroom environments
-- Lack of real-time energy consumption monitoring
+Responsible for:
 
-### Solution
+* Web dashboard
+* Database management
+* Classroom scheduling
+* Analytics and reporting
+* Weather integration
+* Telegram notifications
+* MQTT coordination
+* Energy efficiency monitoring
 
-Our system provides:
-- **Automated Control**: Motion-activated lighting with smart timeout mechanisms
-- **Adaptive HVAC**: Temperature-based air conditioning with dynamic threshold learning
-- **Real-time Insights**: Live monitoring via Telegram bot dashboard
-- **Data-Driven Decisions**: Historical analytics for energy optimization
-- **Scalability**: Microservices architecture supporting unlimited classrooms
+## Edge IoT Node
 
----
+Responsible for:
 
-## ✨ Key Features
+* Temperature sensing
+* Motion detection
+* AI occupancy detection
+* HVAC control
+* Lighting automation
+* Ventilation control
+* Real-time classroom monitoring
 
-### 🔌 Automation
-- **Motion-Activated Lighting**: Automatically turns lights on/off based on room occupancy
-- **Smart HVAC Control**: Temperature-based air conditioning with weekly learning algorithms
-- **Configurable Timeouts**: Customizable delays for lamp and AC shutdown
-
-### 📊 Monitoring & Analytics
-- **Real-time Dashboard**: Interactive Telegram bot for instant system insights
-- **Historical Data**: Time-series storage with daily, weekly, and monthly reports
-- **Energy Consumption Tracking**: Estimated energy savings and cost analysis
-- **Occupancy Analytics**: Room usage patterns and heat maps
-
-### 🏗️ Architecture
-- **Microservices Design**: Independently scalable, fault-tolerant services
-- **MQTT Protocol**: Low-latency, publish-subscribe messaging for IoT devices
-- **RESTful APIs**: Standardized HTTP interfaces for data access
-- **Service Discovery**: Dynamic registration and health monitoring with Consul
-- **Containerized Deployment**: Docker-based infrastructure for easy deployment
-
-### 🔔 Alerting
-- **Temperature Alerts**: Notifications when thresholds are exceeded
-- **Energy Anomalies**: Warnings for unusual consumption patterns
-- **Device Status**: Real-time alerts for offline sensors or actuators
+The Central platform communicates with Edge devices through MQTT, enabling real-time monitoring and intelligent energy optimization.
 
 ---
 
-## 🏛️ Architecture
+# Features
 
-### System Overview
+## Smart Monitoring
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Classroom Environment                        │
-│  ┌──────────┐  ┌──────────┐  ┌──────┐  ┌──────────────┐        │
-│  │ Motion   │  │Temperature│ │ Lamp │  │      AC      │        │
-│  │ Sensor   │  │  Sensor   │ │      │  │              │        │
-│  └─────┬────┘  └─────┬─────┘ └───▲──┘  └──────▲───────┘        │
-└────────┼─────────────┼───────────┼─────────────┼────────────────┘
-         │             │           │             │
-         └─────────────▼───────────┼─────────────┼────────┐
-              Device Connector     │             │        │
-              (Raspberry Pi)       │             │        │
-                     │             │             │        │
-         ┌───────────▼─────────────┴─────────────┴────────┤
-         │              MQTT Broker (Mosquitto)           │
-         └───┬───────────────────────────────────┬────────┘
-             │                                   │
-   ┌─────────▼──────┐                  ┌────────▼─────────┐
-   │  DB Adaptor    │                  │  Control Module  │
-   │   (Storage)    │                  │ (Business Logic) │
-   └────────┬───────┘                  └──────────────────┘
-            │                                   
-   ┌────────▼───────┐
-   │   InfluxDB     │
-   │ (Time-Series)  │
-   └────────┬───────┘
-            │
-   ┌────────▼────────────┐       ┌─────────────────┐
-   │ Statistics Service  │◄──────┤ Classroom       │
-   │   (Analytics)       │       │ Catalog         │
-   └─────────┬───────────┘       └─────────────────┘
-             │
-   ┌─────────▼───────────┐       ┌─────────────────┐
-   │  Telegram Bot       │       │ Service Registry│
-   │   (Dashboard)       │       │    (Consul)     │
-   └─────────────────────┘       └─────────────────┘
-```
+* Real-time temperature monitoring
+* Motion detection using PIR sensors
+* Occupancy estimation using AI camera analytics
+* Historical sensor data collection
+* Classroom status monitoring
 
-### Microservices
+## Intelligent Energy Optimization
 
-| Service | Port | Description |
-|---------|------|-------------|
-| **Device Connector** | - | Publishes sensor data from Raspberry Pi to MQTT |
-| **MQTT Broker** | 1883 | Mosquitto message broker for pub/sub messaging |
-| **Control Module** | - | Implements control algorithms for lamp/AC |
-| **DB Adaptor** | 5002 | Stores sensor data in InfluxDB |
-| **Statistics Service** | 5003 | Processes and aggregates energy data |
-| **Classroom Catalog** | 5001 | Manages classroom and device metadata |
-| **Service Registry** | 8500 | Consul for service discovery and health checks |
-| **Telegram Bot** | - | Interactive dashboard for monitoring and alerts |
-| **InfluxDB** | 8086 | Time-series database for sensor data |
+* Predictive HVAC control
+* Automatic AC pre-cooling before scheduled classes
+* Weather-aware ventilation recommendations
+* Occupancy-based lighting automation
+* Adaptive temperature thresholds
+* Duty-cycle protection for HVAC systems
 
-For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md).
+## AI Occupancy Detection
+
+* YOLOv8-based people detection
+* Automatic occupancy counting
+* Camera duty-cycling for power efficiency
+* Sensor-failure fallback mechanisms
+
+## Classroom Management
+
+* Automated classroom assignment
+* Capacity-aware scheduling
+* Equipment-aware room selection
+* Conflict detection and prevention
+
+## Analytics & Reporting
+
+* Energy efficiency scoring
+* Historical temperature trends
+* Occupancy analytics
+* Classroom ranking system
+* Performance visualization dashboards
+
+## Remote Management
+
+* Web dashboard
+* Telegram bot integration
+* Real-time alerts
+* Manual override controls
+* System health monitoring
 
 ---
 
-## 🛠️ Technology Stack
+# System Architecture
 
-### Core Technologies
-- **Python 3.9+** - Primary programming language
-- **MQTT (Mosquitto)** - Message broker for IoT communication
-- **InfluxDB 2.7** - Time-series database
-- **Flask** - RESTful API framework
-- **Docker & Docker Compose** - Containerization and orchestration
+```text
+                        ┌─────────────────────┐
+                        │   Web Dashboard     │
+                        │      Flask UI       │
+                        └──────────┬──────────┘
+                                   │
+                                   ▼
 
-### IoT & Hardware
-- **Raspberry Pi** - Edge computing for sensors and actuators
-- **PIR Motion Sensor** - Occupancy detection
-- **DHT22 Temperature Sensor** - Environmental monitoring
-- **Relay Module** - Lamp control
-- **IR Transmitter** - Air conditioner control
+                        ┌─────────────────────┐
+                        │     SQLite DB       │
+                        └──────────┬──────────┘
+                                   │
 
-### Service Infrastructure
-- **HashiCorp Consul** - Service registry and discovery
-- **python-telegram-bot** - Telegram integration
-- **paho-mqtt** - MQTT client library
+        ┌──────────────────────────┼──────────────────────────┐
+        ▼                          ▼                          ▼
 
----
+ Prediction Service       Statistics Service        Weather Service
 
-## 🚀 Quick Start
+                                   │
+                                   ▼
 
-### Prerequisites
+                        ┌─────────────────────┐
+                        │     MQTT Broker     │
+                        │     Mosquitto       │
+                        └──────────┬──────────┘
+                                   │
 
-- **Docker** and **Docker Compose** installed ([Get Docker](https://docs.docker.com/get-docker/))
-- **Python 3.9+** (for local development)
-- **Telegram Bot Token** (optional, from [@BotFather](https://t.me/botfather))
-- **Raspberry Pi** (optional, for physical sensors)
+           ┌───────────────────────┼───────────────────────┐
+           ▼                       ▼                       ▼
 
-### Installation
+    Device Connector       Control Module        Camera Module
+    (Sensors)              (Automation)          (YOLOv8)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/iot-classroom-energy-management.git
-   cd iot-classroom-energy-management
-   ```
+           │                       │                       │
+           └───────────────────────┴───────────────────────┘
 
-2. **Configure environment variables**
-   ```bash
-   # Create .env file (optional for Telegram bot)
-   echo "TELEGRAM_BOT_TOKEN=your_bot_token_here" > .env
-   ```
-
-3. **Start all services**
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Verify services are running**
-   ```bash
-   docker-compose ps
-   ```
-
-5. **Access web interfaces**
-   - **InfluxDB UI**: http://localhost:8086 (admin/adminpassword)
-   - **Consul UI**: http://localhost:8500
-   - **API Endpoints**: http://localhost:5001-5003
-
-### Testing the System
-
-```bash
-# Check service health
-curl http://localhost:5001/health
-curl http://localhost:5002/health
-curl http://localhost:5003/health
-
-# View classrooms
-curl http://localhost:5001/api/classrooms
-
-# Get energy statistics
-curl "http://localhost:5003/api/statistics/energy-summary?classroom=room1&period=day"
+                        Smart Classroom
 ```
 
-For detailed setup instructions, see [GETTING_STARTED.md](GETTING_STARTED.md).
+---
+
+# Technology Stack
+
+| Category             | Technology                    |
+| -------------------- | ----------------------------- |
+| Backend              | Python                        |
+| Web Framework        | Flask                         |
+| Messaging Protocol   | MQTT                          |
+| MQTT Broker          | Eclipse Mosquitto             |
+| Database             | SQLite                        |
+| AI & Computer Vision | YOLOv8, OpenCV                |
+| Frontend             | HTML, Bootstrap 5, JavaScript |
+| Data Visualization   | Chart.js                      |
+| Notifications        | Telegram Bot API              |
+| Weather Integration  | OpenWeatherMap API            |
+| Containerization     | Docker                        |
+| Orchestration        | Docker Compose                |
+| Edge Hardware        | Raspberry Pi                  |
 
 ---
 
-## 📁 Project Structure
+# Project Structure
 
-```
-IOT Main/
-├── 📄 docker-compose.yml          # Docker orchestration
-├── 📄 requirements.txt            # Python dependencies
-├── 📄 README.md                   # This file
-├── 📄 ARCHITECTURE.md             # System architecture details
-├── 📄 API_DOCUMENTATION.md        # REST API reference
-├── 📄 GETTING_STARTED.md          # Setup guide
-├── 📄 LICENSE                     # MIT License
-│
-├── 📁 device-connector/           # Raspberry Pi sensor publisher
-│   ├── sensor_publisher.py
-│   └── requirements.txt
-│
-├── 📁 control-module/             # Business logic for automation
-│   ├── control_service.py
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-├── 📁 db-adaptor/                 # Database integration
-│   ├── db_service.py
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-├── 📁 statistics-service/         # Data analytics
+```text
+IoT-Based-Classroom-Energy-Management-System/
+
+├── Central/
+│   ├── UI/
+│   │   ├── app.py
+│   │   ├── Dockerfile
+│   │   ├── requirements.txt
+│   │   └── templates/
+│   │       ├── base.html
+│   │       ├── index.html
+│   │       ├── charts.html
+│   │       ├── classrooms.html
+│   │       ├── control.html
+│   │       └── schedule.html
+│   │
+│   ├── db_adaptor.py
+│   ├── prediction_service.py
 │   ├── statistics_service.py
-│   ├── Dockerfile
-│   └── requirements.txt
+│   ├── weather_service.py
+│   ├── telegram_dashboard.py
+│   ├── thermal_modeler.py
+│   ├── room_selector.py
+│   ├── docker-compose.yml
+│   └── mosquitto.conf
 │
-├── 📁 classroom-catalog/          # Metadata management
-│   ├── catalog_service.py
-│   ├── Dockerfile
-│   └── requirements.txt
+├── Edge/
+│   ├── device_connector.py
+│   ├── control_module.py
+│   ├── camera_module.py
+│   ├── Dockerfile.light
+│   ├── Dockerfile.rpi
+│   ├── docker-compose.yml
+│   ├── mosquitto.conf
+│   ├── requirements.light.txt
+│   └── requirements.rpi.txt
 │
-├── 📁 telegram-dashboard/         # User interface
-│   ├── telegram_bot.py
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-├── 📁 service-registry/           # Service discovery
-│   ├── registry_client.py
-│   └── requirements.txt
-│
-├── 📁 actuators/                  # Hardware controllers
-│   ├── lamp_controller.py
-│   ├── ac_controller.py
-│   └── requirements.txt
-│
-└── 📁 docker/                     # Docker configurations
-    └── mosquitto/
-        └── config/
-            └── mosquitto.conf
+├── README.md
+└── .gitignore
+```
 ```
 
 ---
 
-## 🧠 Control Algorithms
+# Quick Start
 
-### Lamp Control Algorithm
+## Prerequisites
 
-```python
-if motion_detected:
-    turn_lamp_on()
-    reset_timeout_timer()
-else:
-    if timeout_exceeded(5_minutes):
-        turn_lamp_off()
-```
+### Software
 
-**Logic:**
-- Turn **ON** immediately when motion is detected
-- Turn **OFF** after 5 minutes of no motion (configurable)
-- Reset timer on any new motion event
+* Docker
+* Docker Compose
 
-### Air Conditioner Control Algorithm
-
-```python
-if classroom_occupied:
-    threshold = calculate_weekly_average_temp() + offset
-    if current_temp > threshold:
-        turn_ac_on(comfort_temperature=22°C)
-    else:
-        turn_ac_off()
-else:
-    turn_ac_off()
-```
-
-**Logic:**
-- **Dynamic Threshold**: Calculates weekly average temperature to adapt to seasonal changes
-- **Occupied Mode**: Activates AC when temperature exceeds threshold
-- **Unoccupied Mode**: Immediately turns off AC to save energy
-- **Comfort Temperature**: Default set to 22°C (configurable)
-
----
-
-## 📡 API Documentation
-
-### Classroom Catalog API (Port 5001)
+Verify installation:
 
 ```bash
-# Get all classrooms
-GET /api/classrooms
+docker --version
+docker compose version
+```
 
-# Get specific classroom
-GET /api/classrooms/{id}
+### Hardware (Optional)
 
-# Create new classroom
-POST /api/classrooms
-Content-Type: application/json
+* Raspberry Pi 4 / Raspberry Pi 5
+* PIR Motion Sensor
+* DS18B20 Temperature Sensor
+* USB Camera
+* MQTT Broker
+
+---
+
+# Configure Environment
+
+Create a `.env` file:
+
+```env
+MQTT_BROKER_HOST=127.0.0.1
+
+ROOM_ID=classroom001
+
+HAS_CAMERA=true
+
+TEMP_MODE=normal
+
+DEFAULT_AC_PRECOOL_TEMP=21
+
+THRESHOLD_BASE=21.0
+HOLDUP_BAND=1.5
+
+MOTION_START_HOUR=8
+MOTION_END_HOUR=18
+
+CAMERA_ACTIVE_SECONDS=30
+CAMERA_SLEEP_SECONDS=60
+
+MANUAL_MODE_HOLD_SECONDS=60
+```
+
+---
+
+# Docker Deployment
+
+## Build Containers
+
+```bash
+docker compose build
+```
+
+## Start Services
+
+```bash
+docker compose up -d
+```
+
+## Verify Containers
+
+```bash
+docker ps
+```
+
+## View Logs
+
+```bash
+docker compose logs -f
+```
+
+### Individual Services
+
+```bash
+docker compose logs -f sensors
+docker compose logs -f controller
+docker compose logs -f camera
+```
+
+## Stop Services
+
+```bash
+docker compose down
+```
+
+## Restart Services
+
+```bash
+docker compose restart
+```
+
+## Rebuild After Changes
+
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
+
+---
+
+# MQTT Topics
+
+## Sensor Data
+
+```text
+<classroom>/sensors
+```
+
+Example:
+
+```text
+classroom001/sensors
+```
+
+Payload:
+
+```json
 {
-  "id": "room3",
-  "name": "Classroom 103",
-  "building": "Science Building",
-  "floor": 2,
-  "capacity": 25
+  "motion": 1,
+  "temperature": 24.5
 }
 ```
 
-### Statistics Service API (Port 5003)
+## Occupancy Detection
 
-```bash
-# Get daily statistics
-GET /api/statistics/daily?classroom=room1&date=2025-11-28
-
-# Get weekly statistics
-GET /api/statistics/weekly?classroom=room1&week=2025-W48
-
-# Get monthly statistics
-GET /api/statistics/monthly?classroom=room1&month=2025-11
-
-# Get energy summary
-GET /api/statistics/energy-summary?classroom=room1&period=week
+```text
+<classroom>/camera/occupancy
 ```
 
-### DB Adaptor API (Port 5002)
+Payload:
 
-```bash
-# Query sensor data
-GET /api/sensor-data?classroom=room1&sensor_type=temperature&start=2025-11-01T00:00:00Z&end=2025-11-28T23:59:59Z
+```json
+{
+  "occupancy_count": 12
+}
 ```
 
-For complete API reference, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
+## AC Control
 
----
-
-## 📨 MQTT Topics
-
-### Sensor Data (Published by Device Connector)
-
-```
-Topic: {classroom_id}/motion
-Payload: {"classroom_id": "room1", "sensor_type": "motion", "value": 1, "timestamp": "2025-11-28T10:30:00Z"}
-
-Topic: {classroom_id}/temperature
-Payload: {"classroom_id": "room1", "sensor_type": "temperature", "value": 24.5, "unit": "celsius", "timestamp": "2025-11-28T10:30:00Z"}
+```text
+<classroom>/ac/control
 ```
 
-### Control Commands (Published by Control Module)
+Commands:
 
-```
-Topic: {classroom_id}/lamp/control
-Payload: {"classroom_id": "room1", "device": "lamp", "command": "ON", "timestamp": "2025-11-28T10:30:00Z"}
-
-Topic: {classroom_id}/ac/control
-Payload: {"classroom_id": "room1", "device": "air_conditioner", "command": "ON", "target_temperature": 22, "timestamp": "2025-11-28T10:30:00Z"}
-```
-
-### Alerts
-
-```
-Topic: alerts/temperature
-Payload: {"classroom_id": "room1", "alert_type": "temperature", "message": "High temperature: 28°C", "timestamp": "2025-11-28T10:30:00Z"}
-
-Topic: alerts/energy
-Payload: {"classroom_id": "room1", "alert_type": "energy", "message": "High energy consumption detected", "timestamp": "2025-11-28T10:30:00Z"}
+```text
+ON
+OFF
+LOW
+MEDIUM
+HIGH
 ```
 
----
+## AC Precooling
 
-## 💬 Telegram Bot
-
-### Setup
-
-1. Create a bot via [@BotFather](https://t.me/botfather)
-2. Copy the bot token
-3. Add to `.env` file: `TELEGRAM_BOT_TOKEN=your_token`
-4. Restart the telegram-dashboard service
-
-### Bot Commands
-
-- `/start` - Initialize the bot
-- `/stats` - Get real-time statistics for all classrooms
-- `/daily` - View daily energy report
-- `/weekly` - View weekly energy report
-- `/monthly` - View monthly energy report
-- `/classrooms` - List all registered classrooms
-- `/help` - Show available commands
-
-### Features
-
-- ✅ Real-time energy consumption monitoring
-- ✅ Automatic threshold alerts
-- ✅ Historical data visualization
-- ✅ Multi-classroom support
-- ✅ Interactive command interface
-
----
-
-## 🔧 Hardware Setup
-
-### Required Components
-
-#### For Device Connector (Raspberry Pi)
-- Raspberry Pi 3/4 (or similar)
-- PIR Motion Sensor (HC-SR501)
-- DHT22 Temperature/Humidity Sensor
-- Breadboard and jumper wires
-- Power supply
-
-#### For Actuators (Raspberry Pi)
-- Raspberry Pi 3/4 (or similar)
-- Relay Module (for lamp control)
-- IR Transmitter (for AC control)
-- Power supply
-
-### Wiring Diagram
-
-```
-Raspberry Pi GPIO:
-├── PIR Sensor (VCC → 5V, GND → GND, OUT → GPIO17)
-├── DHT22 Sensor (VCC → 3.3V, GND → GND, DATA → GPIO4)
-├── Relay Module (VCC → 5V, GND → GND, IN → GPIO18)
-└── IR Transmitter (VCC → 3.3V, GND → GND, DATA → GPIO23)
+```text
+<classroom>/ac/precool
 ```
 
-### Running on Raspberry Pi
+Payload:
 
-```bash
-# On your Raspberry Pi
-cd device-connector
-python sensor_publisher.py
+```json
+{
+  "target_temp": 21,
+  "duration_minutes": 15,
+  "source": "schedule"
+}
+```
 
-# In separate terminals for actuators
-cd actuators
-python lamp_controller.py
-python ac_controller.py
+## Ventilation Control
+
+```text
+<classroom>/ventilation/suggest
+```
+
+Payload:
+
+```json
+{
+  "action": "activate"
+}
+```
+
+## Discovery Topics
+
+```text
+system/discover
+system/discover/<room>/response
 ```
 
 ---
 
-## 📸 Screenshots
+# Database Design
 
-* screenshots of Telegram bot, InfluxDB dashboard, and system monitoring will be added here*
+### sensor_history
+
+Stores:
+
+* Temperature
+* Motion status
+* Occupancy count
+* AC state
+* Lighting state
+* Operating mode
+
+### classroom_metadata
+
+Stores:
+
+* Room capacity
+* Available equipment
+* Thermal characteristics
+* Efficiency metrics
+
+### course_schedule
+
+Stores:
+
+* Scheduled courses
+* Room assignments
+* Recurring sessions
+* Classroom requirements
+
+### control_logs
+
+Stores:
+
+* Manual commands
+* Automated actions
+* Acknowledgements
+* Execution history
+
+### efficiency_history
+
+Stores:
+
+* Historical efficiency scores
+
+### weather_history
+
+Stores:
+
+* External weather data
 
 ---
 
-## 🤝 Contributing
+# Results
 
-We welcome contributions! Please follow these steps:
+The system demonstrates:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow PEP 8 style guide for Python code
-- Add unit tests for new features
-- Update documentation as needed
-- Ensure Docker builds succeed
+* Automated classroom energy optimization
+* Occupancy-aware HVAC control
+* Weather-aware ventilation recommendations
+* AI-powered occupancy estimation
+* Centralized monitoring and management
+* Reduced unnecessary energy consumption
 
 ---
 
-## 👥 Team
+# Screenshots
+
+## Dashboard
+
+*Add dashboard screenshot here*
+
+## Analytics
+
+*Add analytics screenshot here*
+
+## Control Panel
+
+*Add control panel screenshot here*
+
+---
+
+# Future Improvements
+
+* Energy consumption forecasting
+* Mobile application
+* Multi-building deployment
+* Reinforcement learning HVAC optimization
+* BACnet integration
+* Smart grid connectivity
+* Renewable energy integration
+* Cloud analytics dashboard
+
+---
+
+# Authors
 
 This project was developed by:
 
-- **Ehsan Nikpey**
-- **Shabnam Amouie**
-- **Alireza Nourishad**
-- **Seyed Erfan Ghoreishi** 
-
-**Version:** 1.3  
-**Date:** November 18, 2025
+* **Ehsan Nikpey**
+* **Seyed Erfan Ghoreishi**
+* **Alireza Nourishad**
+* **Shabnam Amouie**
 
 ---
 
-## 📄 License
+# License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🌐 Additional Resources
-
-- [Architecture Documentation](ARCHITECTURE.md) - Detailed system design
-- [API Documentation](API_DOCUMENTATION.md) - Complete API reference
-- [Getting Started Guide](GETTING_STARTED.md) - Step-by-step setup
-- [MQTT Protocol](https://mqtt.org/) - Learn about MQTT
-- [InfluxDB Documentation](https://docs.influxdata.com/) - Time-series database
+This project was developed for educational and research purposes.
 
 ---
 
-## 📧 Contact
+# Acknowledgments
 
-For questions, suggestions, or support:
-- Open an issue on GitHub
-- Contact the development team
-
----
-
-<div align="center">
-
-**⭐ Star this repository if you find it helpful! ⭐**
-
-Made with ❤️ for sustainable education
-
-</div>
-
+* Flask
+* Eclipse Mosquitto
+* OpenWeatherMap
+* YOLOv8
+* OpenCV
+* Bootstrap
+* Chart.js
+* Docker
+* Raspberry Pi Foundation
