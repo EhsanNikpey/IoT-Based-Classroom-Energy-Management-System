@@ -169,7 +169,18 @@ The Central platform communicates with Edge devices through MQTT, enabling real-
 IoT-Based-Classroom-Energy-Management-System/
 
 ├── Central/
-│   ├── app.py
+│   ├── UI/
+│   │   ├── app.py
+│   │   ├── Dockerfile
+│   │   ├── requirements.txt
+│   │   └── templates/
+│   │       ├── base.html
+│   │       ├── index.html
+│   │       ├── charts.html
+│   │       ├── classrooms.html
+│   │       ├── control.html
+│   │       └── schedule.html
+│   │
 │   ├── db_adaptor.py
 │   ├── prediction_service.py
 │   ├── statistics_service.py
@@ -177,33 +188,23 @@ IoT-Based-Classroom-Energy-Management-System/
 │   ├── telegram_dashboard.py
 │   ├── thermal_modeler.py
 │   ├── room_selector.py
-│   │
-│   ├── templates/
-│   │   ├── base.html
-│   │   ├── index.html
-│   │   ├── charts.html
-│   │   ├── classrooms.html
-│   │   ├── control.html
-│   │   └── schedule.html
-│   │
-│   ├── Dockerfile
 │   ├── docker-compose.yml
-│   ├── mosquitto.conf
-│   └── requirements.txt
+│   └── mosquitto.conf
 │
 ├── Edge/
 │   ├── device_connector.py
 │   ├── control_module.py
 │   ├── camera_module.py
-│   │
 │   ├── Dockerfile.light
 │   ├── Dockerfile.rpi
 │   ├── docker-compose.yml
+│   ├── mosquitto.conf
 │   ├── requirements.light.txt
 │   └── requirements.rpi.txt
 │
 ├── README.md
 └── .gitignore
+```
 ```
 
 ---
