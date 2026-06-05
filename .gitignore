@@ -1,12 +1,45 @@
+# IDEs
 .idea/
 .vscode/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
 .env
 *.env.local
-.dockerignore
 
+# Logs
 *.log
+
+# Database / runtime data
 data/
 db/
+mosquitto_data/
+*.db
 
-.venv/
+# Docker
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
