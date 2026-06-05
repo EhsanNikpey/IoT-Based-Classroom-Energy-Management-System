@@ -1,0 +1,123 @@
+# Center/docker-compose.yml
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto_data:/mosquitto/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  db-adaptor:
+    build: .
+    image: iot_smart_classroom_center/db-adaptor:latest
+    command: python -u db_adaptor.py
+    environment:
+      - MQTT_BROKER=${MQTT_BROKER}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  stats-service:
+    build: .
+    image: iot_smart_classroom_center/stats-service:latest
+    command: python -u statistics_service.py
+    environment:
+      - EFFICIENCY_SENSITIVITY=${EFFICIENCY_SENSITIVITY}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  telegram-bot:
+    build: .
+    image: iot_smart_classroom_center/telegram-bot:latest
+    command: sh -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && python -u telegram_dashboard.py"
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  prediction-service:
+    build: .
+    image: iot_smart_classroom_center/prediction-service:latest
+    command: python -u prediction_service.py
+    environment:
+      - MQTT_BROKER=${MQTT_BROKER}
+      - DEFAULT_AC_PRECOOL_TEMP=${DEFAULT_AC_PRECOOL_TEMP}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  weather-service:
+    build: .
+    image: iot_smart_classroom_center/weather-service:latest
+    command: sh -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && python -u weather_service.py"
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED}
+      - MQTT_BROKER=${MQTT_BROKER}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+
+  dashboard-ui:
+    # build: ./UI
+    build: .
+    image: iot_smart_classroom_center/dashboard-ui:latest
+    command: python -u UI/app.py
+    working_dir: /app
+    environment:
+      - MQTT_BROKER=${MQTT_BROKER}
+      - MANUAL_HOLD_THRESHOLD=${MANUAL_HOLD_THRESHOLD}
+    volumes:
+      - ./data:/app/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    network_mode: "host"

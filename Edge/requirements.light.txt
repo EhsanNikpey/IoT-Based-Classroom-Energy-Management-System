@@ -1,0 +1,5 @@
+# Edge/requirements.light.txt
+paho-mqtt==1.6.1
+requests==2.31.0
+gpiozero
+lgpio

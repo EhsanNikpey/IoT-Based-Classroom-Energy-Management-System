@@ -1,0 +1,18 @@
+# Edge/requirements.rpi.txt
+paho-mqtt==1.6.1
+requests==2.31.0
+
+# CPU-only PyTorch for ARM (Raspberry Pi)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.0.1
+torchvision==0.15.2
+
+# Ultralytics (will use CPU torch)
+numpy<2.0
+ultralytics==8.0.196
+
+# OpenCV for ARM (headless = no GUI deps)
+opencv-python-headless==4.8.1.78
+
+# Optional: ONNX Runtime for faster CPU inference (ARM wheel)
+# onnxruntime==1.16.3  # Uncomment if you want to export YOLO to ONNX

@@ -1,0 +1,25 @@
+# Edge/Dockerfile.rpi
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# ARM-compatible runtime libs
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libgl1 libglib2.0-0 libgomp1 libatomic1 && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY requirements.rpi.txt .
+
+# Install with CPU-only PyTorch (critical for RPi)
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.rpi.txt
+
+# Bake YOLO model into image
+RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+
+COPY *.py ./
+COPY requirements.rpi.txt .
+
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "-u", "app.py"]

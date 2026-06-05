@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+
+.env
+*.env.local
+.dockerignore
+
+*.log
+data/
+db/
+
+.venv/
