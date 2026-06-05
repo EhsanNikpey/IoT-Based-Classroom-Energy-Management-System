@@ -6,7 +6,7 @@
 ![MQTT](https://img.shields.io/badge/MQTT-Mosquitto-orange)
 ![SQLite](https://img.shields.io/badge/Database-SQLite-lightgrey)
 ![YOLOv8](https://img.shields.io/badge/AI-YOLOv8-red)
-![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi-darkgreen)
+![Raspberry Pi](https://img.shields.io/badge/Platform-Raspberry%20Pi-darkgreen)
 
 ## Overview
 
@@ -16,48 +16,87 @@ The system combines edge computing devices, real-time sensors, MQTT communicatio
 
 ---
 
-## Features
+# Repository Organization
 
-### Smart Monitoring
-- Real-time temperature monitoring
-- Motion detection using PIR sensors
-- Occupancy estimation using AI camera analytics
-- Historical sensor data collection
-- Classroom status monitoring
+The project is divided into two major components:
 
-### Intelligent Energy Optimization
-- Predictive HVAC control
-- Automatic AC pre-cooling before scheduled classes
-- Weather-aware ventilation recommendations
-- Occupancy-based lighting automation
-- Adaptive temperature thresholds
-- Duty-cycle protection for HVAC systems
+## Central Management Platform
 
-### AI Occupancy Detection
-- YOLOv8-based people detection
-- Automatic occupancy counting
-- Camera duty-cycling for power efficiency
-- Sensor-failure fallback mechanisms
+Responsible for:
 
-### Classroom Management
-- Automated classroom assignment
-- Capacity-aware scheduling
-- Equipment-aware room selection
-- Conflict detection and prevention
+* Web dashboard
+* Database management
+* Classroom scheduling
+* Analytics and reporting
+* Weather integration
+* Telegram notifications
+* MQTT coordination
+* Energy efficiency monitoring
 
-### Analytics & Reporting
-- Energy efficiency scoring
-- Historical temperature trends
-- Occupancy analytics
-- Classroom ranking system
-- Performance visualization dashboards
+## Edge IoT Node
 
-### Remote Management
-- Web dashboard
-- Telegram bot integration
-- Real-time alerts
-- Manual override controls
-- System health monitoring
+Responsible for:
+
+* Temperature sensing
+* Motion detection
+* AI occupancy detection
+* HVAC control
+* Lighting automation
+* Ventilation control
+* Real-time classroom monitoring
+
+The Central platform communicates with Edge devices through MQTT, enabling real-time monitoring and intelligent energy optimization.
+
+---
+
+# Features
+
+## Smart Monitoring
+
+* Real-time temperature monitoring
+* Motion detection using PIR sensors
+* Occupancy estimation using AI camera analytics
+* Historical sensor data collection
+* Classroom status monitoring
+
+## Intelligent Energy Optimization
+
+* Predictive HVAC control
+* Automatic AC pre-cooling before scheduled classes
+* Weather-aware ventilation recommendations
+* Occupancy-based lighting automation
+* Adaptive temperature thresholds
+* Duty-cycle protection for HVAC systems
+
+## AI Occupancy Detection
+
+* YOLOv8-based people detection
+* Automatic occupancy counting
+* Camera duty-cycling for power efficiency
+* Sensor-failure fallback mechanisms
+
+## Classroom Management
+
+* Automated classroom assignment
+* Capacity-aware scheduling
+* Equipment-aware room selection
+* Conflict detection and prevention
+
+## Analytics & Reporting
+
+* Energy efficiency scoring
+* Historical temperature trends
+* Occupancy analytics
+* Classroom ranking system
+* Performance visualization dashboards
+
+## Remote Management
+
+* Web dashboard
+* Telegram bot integration
+* Real-time alerts
+* Manual override controls
+* System health monitoring
 
 ---
 
@@ -106,21 +145,21 @@ The system combines edge computing devices, real-time sensors, MQTT communicatio
 
 # Technology Stack
 
-| Category | Technology |
-|-----------|------------|
-| Backend | Python |
-| Web Framework | Flask |
-| Messaging | MQTT |
-| Broker | Eclipse Mosquitto |
-| Database | SQLite |
-| AI Vision | YOLOv8 |
-| Computer Vision | OpenCV |
-| Frontend | Bootstrap 5 |
-| Analytics | Chart.js |
-| Notifications | Telegram Bot API |
-| Weather API | OpenWeatherMap |
-| Containerization | Docker |
-| Orchestration | Docker Compose |
+| Category             | Technology                    |
+| -------------------- | ----------------------------- |
+| Backend              | Python                        |
+| Web Framework        | Flask                         |
+| Messaging Protocol   | MQTT                          |
+| MQTT Broker          | Eclipse Mosquitto             |
+| Database             | SQLite                        |
+| AI & Computer Vision | YOLOv8, OpenCV                |
+| Frontend             | HTML, Bootstrap 5, JavaScript |
+| Data Visualization   | Chart.js                      |
+| Notifications        | Telegram Bot API              |
+| Weather Integration  | OpenWeatherMap API            |
+| Containerization     | Docker                        |
+| Orchestration        | Docker Compose                |
+| Edge Hardware        | Raspberry Pi                  |
 
 ---
 
@@ -129,38 +168,42 @@ The system combines edge computing devices, real-time sensors, MQTT communicatio
 ```text
 IoT-Based-Classroom-Energy-Management-System/
 
-├── app.py
-├── db_adaptor.py
-├── prediction_service.py
-├── statistics_service.py
-├── weather_service.py
-├── telegram_dashboard.py
-├── thermal_modeler.py
-├── room_selector.py
+├── Central/
+│   ├── app.py
+│   ├── db_adaptor.py
+│   ├── prediction_service.py
+│   ├── statistics_service.py
+│   ├── weather_service.py
+│   ├── telegram_dashboard.py
+│   ├── thermal_modeler.py
+│   ├── room_selector.py
+│   │
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   ├── charts.html
+│   │   ├── classrooms.html
+│   │   ├── control.html
+│   │   └── schedule.html
+│   │
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── mosquitto.conf
+│   └── requirements.txt
 │
-├── device_connector.py
-├── control_module.py
-├── camera_module.py
+├── Edge/
+│   ├── device_connector.py
+│   ├── control_module.py
+│   ├── camera_module.py
+│   │
+│   ├── Dockerfile.light
+│   ├── Dockerfile.rpi
+│   ├── docker-compose.yml
+│   ├── requirements.light.txt
+│   └── requirements.rpi.txt
 │
-├── templates/
-│   ├── index.html
-│   ├── charts.html
-│   ├── classrooms.html
-│   ├── control.html
-│   ├── schedule.html
-│   └── base.html
-│
-├── Dockerfile
-├── Dockerfile.light
-├── Dockerfile.rpi
-├── docker-compose.yml
-│
-├── mosquitto.conf
-├── requirements.txt
-├── requirements.light.txt
-├── requirements.rpi.txt
-│
-└── classroom_data.db
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -171,8 +214,8 @@ IoT-Based-Classroom-Energy-Management-System/
 
 ### Software
 
-- Docker
-- Docker Compose
+* Docker
+* Docker Compose
 
 Verify installation:
 
@@ -183,11 +226,11 @@ docker compose version
 
 ### Hardware (Optional)
 
-- Raspberry Pi 4 / Raspberry Pi 5
-- PIR Motion Sensor
-- DS18B20 Temperature Sensor
-- USB Camera
-- MQTT Broker
+* Raspberry Pi 4 / Raspberry Pi 5
+* PIR Motion Sensor
+* DS18B20 Temperature Sensor
+* USB Camera
+* MQTT Broker
 
 ---
 
@@ -240,37 +283,17 @@ docker compose up -d
 docker ps
 ```
 
-Expected services:
-
-```text
-sensors
-controller
-camera
-```
-
 ## View Logs
-
-All services:
 
 ```bash
 docker compose logs -f
 ```
 
-Sensors:
+### Individual Services
 
 ```bash
 docker compose logs -f sensors
-```
-
-Controller:
-
-```bash
 docker compose logs -f controller
-```
-
-Camera:
-
-```bash
 docker compose logs -f camera
 ```
 
@@ -293,31 +316,6 @@ docker compose down
 docker compose build --no-cache
 docker compose up -d
 ```
-
----
-
-# Raspberry Pi Deployment
-
-The edge node is designed to run on Raspberry Pi devices.
-
-### Lightweight Edge Build
-
-```bash
-docker build -f Dockerfile.light -t smart-classroom-edge .
-```
-
-### AI Camera Build
-
-```bash
-docker build -f Dockerfile.rpi -t smart-classroom-ai .
-```
-
-Supported hardware:
-
-- PIR Motion Sensor
-- DS18B20 Temperature Sensor
-- USB Camera
-- MQTT Broker
 
 ---
 
@@ -344,8 +342,6 @@ Payload:
 }
 ```
 
----
-
 ## Occupancy Detection
 
 ```text
@@ -359,8 +355,6 @@ Payload:
   "occupancy_count": 12
 }
 ```
-
----
 
 ## AC Control
 
@@ -378,8 +372,6 @@ MEDIUM
 HIGH
 ```
 
----
-
 ## AC Precooling
 
 ```text
@@ -396,8 +388,6 @@ Payload:
 }
 ```
 
----
-
 ## Ventilation Control
 
 ```text
@@ -412,8 +402,6 @@ Payload:
 }
 ```
 
----
-
 ## Discovery Topics
 
 ```text
@@ -425,84 +413,108 @@ system/discover/<room>/response
 
 # Database Design
 
-The system automatically creates and manages the following tables:
-
 ### sensor_history
 
 Stores:
 
-- Temperature
-- Motion status
-- Occupancy count
-- AC state
-- Lighting state
-- Operating mode
+* Temperature
+* Motion status
+* Occupancy count
+* AC state
+* Lighting state
+* Operating mode
 
 ### classroom_metadata
 
 Stores:
 
-- Room capacity
-- Available equipment
-- Thermal characteristics
-- Efficiency metrics
+* Room capacity
+* Available equipment
+* Thermal characteristics
+* Efficiency metrics
 
 ### course_schedule
 
 Stores:
 
-- Scheduled courses
-- Room assignments
-- Recurring sessions
-- Classroom requirements
+* Scheduled courses
+* Room assignments
+* Recurring sessions
+* Classroom requirements
 
 ### control_logs
 
 Stores:
 
-- Manual commands
-- Automated actions
-- Acknowledgements
-- Execution history
+* Manual commands
+* Automated actions
+* Acknowledgements
+* Execution history
 
 ### efficiency_history
 
 Stores:
 
-- Historical efficiency scores
+* Historical efficiency scores
 
 ### weather_history
 
 Stores:
 
-- External weather data
+* External weather data
 
 ---
 
-# Research Contribution
+# Results
 
-This project demonstrates how IoT devices, AI-based occupancy detection, predictive control strategies, and weather-aware automation can be integrated into a unified smart-building platform.
+The system demonstrates:
 
-The system aims to:
+* Automated classroom energy optimization
+* Occupancy-aware HVAC control
+* Weather-aware ventilation recommendations
+* AI-powered occupancy estimation
+* Centralized monitoring and management
+* Reduced unnecessary energy consumption
 
-- Reduce unnecessary HVAC operation
-- Reduce lighting energy consumption
-- Improve classroom utilization
-- Maintain thermal comfort
-- Support data-driven facility management
+---
+
+# Screenshots
+
+## Dashboard
+
+*Add dashboard screenshot here*
+
+## Analytics
+
+*Add analytics screenshot here*
+
+## Control Panel
+
+*Add control panel screenshot here*
 
 ---
 
 # Future Improvements
 
-- Energy consumption forecasting
-- Mobile application
-- Multi-building deployment
-- Reinforcement learning HVAC optimization
-- BACnet integration
-- Smart grid connectivity
-- Renewable energy integration
-- Cloud analytics dashboard
+* Energy consumption forecasting
+* Mobile application
+* Multi-building deployment
+* Reinforcement learning HVAC optimization
+* BACnet integration
+* Smart grid connectivity
+* Renewable energy integration
+* Cloud analytics dashboard
+
+---
+
+# Authors
+
+This project was developed by:
+
+* **Ehsan Nikpey**
+* **Seyed Erfan Ghoreishi**
+* **Alireza Nourishad**
+* **Shabnam Amouie**
 
 ---
 
@@ -512,23 +524,14 @@ This project was developed for educational and research purposes.
 
 ---
 
-# Authors
-
-Ehsan Nikpey
-Seyed Erfan Ghoreishi 
-Alireza Nourishad 
-Shabnam Amouie
-
----
-
 # Acknowledgments
 
-- Flask
-- Eclipse Mosquitto
-- OpenWeatherMap
-- YOLOv8
-- OpenCV
-- Bootstrap
-- Chart.js
-- Docker
-- Raspberry Pi Foundation
+* Flask
+* Eclipse Mosquitto
+* OpenWeatherMap
+* YOLOv8
+* OpenCV
+* Bootstrap
+* Chart.js
+* Docker
+* Raspberry Pi Foundation
