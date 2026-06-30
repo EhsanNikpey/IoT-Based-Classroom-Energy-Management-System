@@ -233,6 +233,151 @@ docker compose version
 * USB Camera
 * MQTT Broker
 
+
+
+---
+
+# Running on Windows (Docker Desktop)
+
+This project was originally developed for Linux/Raspberry Pi. If you are running it on **Windows using Docker Desktop**, a few configuration changes are required.
+
+## 1. Remove Host Networking
+
+Docker Desktop does not support Linux host networking in the same way as Linux.
+
+In both:
+
+- `Central/docker-compose.yml`
+- `Edge/docker-compose.yml`
+
+remove or comment out:
+
+```yaml
+network_mode: "host"
+```
+
+---
+
+## 2. Publish Required Ports
+
+Instead of using `network_mode: "host"`, expose the required ports.
+
+### Dashboard UI
+
+```yaml
+dashboard-ui:
+  ports:
+    - "5000:5000"
+```
+
+### MQTT Broker
+
+If the MQTT broker is running inside Docker, expose port 1883:
+
+```yaml
+mqtt-broker:
+  ports:
+    - "1883:1883"
+```
+
+---
+
+## 3. Update MQTT Broker Address
+
+When using Docker Compose networking, containers should communicate using the **service name**, not `127.0.0.1`.
+
+Example:
+
+```env
+MQTT_BROKER=mqtt-broker
+MQTT_BROKER_HOST=mqtt-broker
+```
+
+instead of
+
+```env
+MQTT_BROKER_HOST=127.0.0.1
+```
+
+---
+
+## 4. Disable Raspberry Pi Hardware Devices
+
+Windows does not provide Raspberry Pi device interfaces.
+
+Comment out or remove:
+
+```yaml
+devices:
+  - "/dev/video0:/dev/video0"
+```
+
+and
+
+```yaml
+devices:
+  - "/dev/gpiomem:/dev/gpiomem"
+```
+
+These should only be enabled when deploying to a Raspberry Pi.
+
+---
+
+## 5. Disable Camera (Optional)
+
+If testing without a Raspberry Pi camera, set:
+
+```env
+HAS_CAMERA=false
+```
+
+This prevents the camera service from attempting to access unavailable hardware.
+
+---
+
+## 6. Ensure Flask Listens on All Interfaces
+
+The dashboard application should start Flask using:
+
+```python
+app.run(host="0.0.0.0", port=5000)
+```
+
+instead of:
+
+```python
+app.run(host="127.0.0.1", port=5000)
+```
+
+---
+
+## 7. Rebuild Containers
+
+After making the above changes:
+
+```bash
+docker compose down
+docker compose up -d --build
+```
+
+---
+
+## 8. Access the Dashboard
+
+Open your browser and navigate to:
+
+```
+http://localhost:5000
+```
+
+---
+
+## Notes
+
+- Raspberry Pi hardware features (camera, GPIO, temperature sensors, etc.) are not available on Windows.
+- AI, dashboard, MQTT communication, database, analytics, and prediction services can still be developed and tested using Docker Desktop.
+- Before deploying to a Raspberry Pi, restore the Raspberry Pi-specific Docker configuration (`network_mode: "host"` and `devices:` mappings) if required by your hardware setup.
+
 ---
 
 # Configure Environment
